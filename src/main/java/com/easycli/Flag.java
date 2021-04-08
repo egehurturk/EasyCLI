@@ -62,6 +62,16 @@ public class Flag implements CmdObject {
         }
     }
 
+    @Override
+    public String toString() {
+        return "Flag{" +
+                "longOptionName='" + longOptionName + '\'' +
+                ", shortOptionName='" + shortOptionName + '\'' +
+                ", description='" + description + '\'' +
+                ", optional=" + optional +
+                '}';
+    }
+
     /** Call the builder for creating this class */
     public static Flag.Builder with() {
         return new Flag.Builder();

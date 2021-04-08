@@ -79,6 +79,17 @@ public class Arg implements CmdObject {
 
     }
 
+    @Override
+    public String toString() {
+        return "Arg{" +
+                "longOptionName='" + longOptionName + '\'' +
+                ", shortOptionName='" + shortOptionName + '\'' +
+                ", description='" + description + '\'' +
+                ", argName='" + argName + '\'' +
+                ", optional=" + optional +
+                '}';
+    }
+
     /** Call builder for building this class */
     public static Builder with() {
         return new Builder();
