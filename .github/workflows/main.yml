@@ -22,6 +22,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
+
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
@@ -45,7 +46,10 @@ jobs:
         run: mvn -B clean package
 
   run_tests:
+  
     runs-on: ubuntu-latest
+    needs: [ build ]
+    
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
