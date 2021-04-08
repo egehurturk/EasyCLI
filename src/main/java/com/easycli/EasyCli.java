@@ -6,7 +6,7 @@ import java.util.Arrays;
 /**
  * Command Line Argument Parser.
  * This class accepts the arguments (<code>String[] args</code>) and a
- * {@link CmdObjects} object to parse arguments.
+ * {@link CmdOptions} object to parse arguments.
  *
  * The inner class {@link Synopsis} provides methods to automatically
  * print help message containing the synopsis of the required or optional arguments.
@@ -14,14 +14,14 @@ import java.util.Arrays;
 public class EasyCli {
 
     /** Whether the command line is grammatically correct or not based on
-     * the arguments defined in {@link CmdObjects}. */
+     * the arguments defined in {@link CmdOptions}. */
     private boolean succesfull;
 
     /** Status code for UNIX based OS.  */
     private int status = 1;
 
     /** Command Line Objects containing {@link Arg}s or {@link Flag}s */
-    private CmdObjects commandLineObjects;
+    private CmdOptions commandLineObjects;
 
     /** Actual arguments entered by client. The String array is a parameter of
      * the <code>main</code> method, as seen in <code>public static void main(String[] args)</code>
@@ -66,17 +66,17 @@ public class EasyCli {
 
 
     /**
-     * Constructor with an array of arguments and CmdObjects object.
+     * Constructor with an array of arguments and CmdOptions object.
      * The parameter args is the actual arguments entered by the client,
      * and is used to check if that contains {@link Arg}s and {@link Flag}s added
      * to the objects parameter
      *
      * @param args command line argument array, the parameter of <code>public static void main(String[] args)</code>
-     * @param objects desired objects stored as {@link CmdObjects}
+     * @param objects desired objects stored as {@link CmdOptions}
      */
-    public EasyCli(String[] args, CmdObjects objects) {
+    public EasyCli(String[] args, CmdOptions objects) {
         System.out.println("Args: " + Arrays.toString(args));
-        System.out.println("CmdObjects: " + objects);
+        System.out.println("CmdOptions: " + objects);
     }
 
 
