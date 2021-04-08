@@ -12,11 +12,30 @@ import org.junit.jupiter.api.Test;
 public class EasyCliTest {
 
     @Test
+    @DisplayName("Test CmdOptions class")
+    void checkCmdOptionsEverythingSuccessful() {
+        CmdOptions opt = getOptions();
+        Assertions.assertTrue(opt.hasOption("version", "v"));
+        Assertions.assertTrue(opt.hasOption("version", "v", "Get version"));
+        Assertions.assertTrue(opt.hasOption("verbose", "o", "Get version"));
+        Assertions.assertFalse(opt.hasOption("eewtre", "o"));
+        Assertions.assertFalse(opt.hasOption("config", "c", "gjkrwlrejgwl;erk"));
+    }
+
+    @Test
+    @DisplayName("If there are duplicate options, do not add the newer one")
+    void checkDuplicateOptionsCmdOptionsClass() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> getDuplicateOptions());
+        Assertions.assertThrows(IllegalArgumentException.class, this::getDuplicateOptions2);
+    }
+
+
+    @Test
     @Disabled
     @DisplayName("Given command line arguments in array, program should make arguments accessible")
     void commandLineValueShouldBeAccessed() {
-        // ./example -v --foo yesplease --bar nosir
-        String[] args = {"./example", "-v", "--foo", "yesplease", "--bar", "nosir"};
+        // ./banzai -c|--config file_path [-v|--version] [-o|--verbose]
+        String[] args = {"./banzai", "-c", "/dev/null", "-v", "-o"};
         EasyCli cli = new EasyCli(args, null);
         if (!cli.isSuccessful()) {
             EasyCli.Synopsis synopsis = cli.new Synopsis();
@@ -148,6 +167,116 @@ public class EasyCliTest {
                         .description("")
                         .optional()
                         .build());
+    }
+
+    private CmdOptions getOptions() {
+
+        Arg config = Arg.with()
+                .longOptionName("config")
+                .shortOptionName("c")
+                .argName("file path")
+                .description("Configuration file path")
+                .required()
+                .build();
+
+        Flag ver = Flag.with()
+                .longOptionName("version")
+                .shortOptionName("v")
+                .description("Get version")
+                .optional()
+                .build();
+
+        Flag verbose = Flag.with()
+                .longOptionName("verbose")
+                .shortOptionName("o")
+                .description("Get version")
+                .optional()
+                .build();
+
+        CmdOptions options = new CmdOptions(config, ver, verbose);
+        System.out.println(options);
+        return options;
+    }
+
+    private CmdOptions getDuplicateOptions() {
+
+        Arg config = Arg.with()
+                .longOptionName("config")
+                .shortOptionName("c")
+                .argName("file path")
+                .description("Configuration file path")
+                .required()
+                .build();
+
+        Arg config2 = Arg.with()
+                .longOptionName("config")
+                .shortOptionName("c")
+                .argName("fsdflgsd")
+                .description("sdflgsdjsdf;")
+                .required()
+                .build();
+
+        Flag ver = Flag.with()
+                .longOptionName("version")
+                .shortOptionName("v")
+                .description("Get version")
+                .optional()
+                .build();
+
+        Flag verbose = Flag.with()
+                .longOptionName("verbose")
+                .shortOptionName("o")
+                .description("Get version")
+                .optional()
+                .build();
+
+        CmdOptions options = new CmdOptions(config, config2, ver, verbose);
+        System.out.println(options);
+        return options;
+    }
+
+    private CmdOptions getDuplicateOptions2() {
+
+        Arg config = Arg.with()
+                .longOptionName("config")
+                .shortOptionName("c")
+                .argName("file path")
+                .description("Configuration file path")
+                .required()
+                .build();
+
+        Arg config2 = Arg.with()
+                .longOptionName("config")
+                .shortOptionName("c")
+                .argName("fsdflgsd")
+                .description("sdflgsdjsdf;")
+                .required()
+                .build();
+
+        Flag ver = Flag.with()
+                .longOptionName("version")
+                .shortOptionName("v")
+                .description("Get version")
+                .optional()
+                .build();
+
+        Flag ver2 = Flag.with()
+                .longOptionName("version")
+                .shortOptionName("vava")
+                .description("Get version")
+                .optional()
+                .build();
+
+        Flag verbose = Flag.with()
+                .longOptionName("verbose")
+                .shortOptionName("o")
+                .description("Get version")
+                .optional()
+                .build();
+
+        CmdOptions options = new CmdOptions(config, config2, ver, ver2, verbose);
+        System.out.println(options);
+        return options;
     }
 
 }
