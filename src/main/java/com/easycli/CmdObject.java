@@ -12,4 +12,8 @@ interface CmdObject {
         /** Description for an option. */
         Builder description(String description);
     }
+
+    String getLongOptionName();
+    String getShortOptionName();
+    String getDescription();
 }
