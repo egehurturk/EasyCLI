@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("Easy CLI tests")
 public class EasyCliTest {
 
+
     @Test
     @DisplayName("Test CmdOptions class")
     void checkCmdOptionsEverythingSuccessful() {
