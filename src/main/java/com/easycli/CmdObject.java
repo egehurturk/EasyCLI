@@ -11,9 +11,14 @@ interface CmdObject {
         Builder shortOptionName(String shortOptionName);
         /** Description for an option. */
         Builder description(String description);
+        /** Alias for an option */
+        Builder alias(String alias);
     }
 
     String getLongOptionName();
     String getShortOptionName();
     String getDescription();
+    String getAlias();
+    boolean isOptional();
+    boolean isArg();
 }
