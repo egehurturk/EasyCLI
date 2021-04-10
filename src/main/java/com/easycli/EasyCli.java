@@ -1,97 +1,177 @@
 package com.easycli;
 
-import java.util.Arrays;
 
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 
 /**
- * Command Line Argument Parser.
- * This class accepts the arguments (<code>String[] args</code>) and a
- * {@link CmdOptions} object to parse arguments.
- *
- * The inner class {@link Synopsis} provides methods to automatically
- * print help message containing the synopsis of the required or optional arguments.
+ * EasyCli class to retrieve and match command line arguments
  */
 public class EasyCli {
 
-    /** Whether the command line is grammatically correct or not based on
-     * the arguments defined in {@link CmdOptions}. */
-    private boolean succesfull;
-
-    /** Status code for UNIX based OS.  */
-    private int status = 1;
-
-    /** Command Line Objects containing {@link Arg}s or {@link Flag}s */
-    private CmdOptions commandLineObjects;
-
-    /** Actual arguments entered by client. The String array is a parameter of
-     * the <code>main</code> method, as seen in <code>public static void main(String[] args)</code>
-     * */
-    private String[] clientArguments;
+    /** actual args */
+    @Getter @Setter private String[] args;
+    /** client generated options to check */
+    @Getter @Setter private CmdOptions options;
+    private boolean success = false;
 
     /**
-     * Tell if the args include everything, i.e. the operation
-     * is successful
+     * @param args main method args
+     * @param options user generated options
      */
-    public boolean isSuccessful() { return succesfull; }
+    public EasyCli(@NonNull String[] args, @NonNull CmdOptions options) {
+        this.args = args;
+        this.options = options;
+    }
 
     /**
-     * Get the value for status code
+     * Check if all required {@link CmdObject}s in {@link #options} are
+     * present in {@link #args}
+     *
+     * @return success
      */
-    public int getStatus() { return this.status; }
+    public boolean matchAllArgs() {
+        for (CmdObject opt: options.getOptions()) {
 
-    /**
-     * Tell whether the command line arguments
-     * include the given argument, as string.
-     * @param arg Argument name
-     */
-    public boolean has(String arg) {
-        System.out.println("Code later on...");
+            if (!opt.isOptional() &&
+                    (!existsInArray("-" + opt.getShortOptionName(), args) &&
+                            !existsInArray("--" + opt.getLongOptionName(), args))
+            ) {
+                this.success = false;
+                return false;
+            }
+        }
+        this.success = true;
+        return true;
+    }
+
+    // Check if the given value exists in the given array
+    private <T> boolean existsInArray(T val, T[] array) {
+        for (T t: array)
+            if (t.equals(val))
+                return true;
         return false;
     }
 
     /**
-     * Get the value of the given command
-     * line argument.
-     * <p>
-     * If the argument is the argument name
-     * of {@link Flag}, then an empty string is returned.
-     *
-     * @param arg argument name
-     * @return the value of arg
-     *
-     */
-    public String valueOf(String arg) {
-        return "none";
-    }
-
-
-    /**
-     * Constructor with an array of arguments and CmdOptions object.
-     * The parameter args is the actual arguments entered by the client,
-     * and is used to check if that contains {@link Arg}s and {@link Flag}s added
-     * to the objects parameter
-     *
-     * @param args command line argument array, the parameter of <code>public static void main(String[] args)</code>
-     * @param objects desired objects stored as {@link CmdOptions}
-     */
-    public EasyCli(String[] args, CmdOptions objects) {
-        System.out.println("Args: " + Arrays.toString(args));
-        System.out.println("CmdOptions: " + objects);
-    }
-
-
-    /**
-     * This class is used to print synopsis and help messages
-     * containing useful information about arguments, e.g., whether
-     * they are required or optional, etc.
-     * <p>
-     * The general format for help is described below. The <code>-h | --help</code> flag
-     * is always automatically added to {@link #commandLineObjects}.
+     * Synopsis class for printing help message
      */
     class Synopsis {
+        // ./banzai -c|--config file_path [-v|--version] [-o|--verbose]
+
+        @Getter private String helpMessage = "";
+        private String appName;
+
+        /**
+         * Construct this with the appName
+         * @param appName app name to display in help text
+         */
+        public Synopsis(@NonNull String appName) {
+            if (appName.length() == 0)
+                throw new IllegalArgumentException("App name should not be an empty string");
+            this.appName = appName;
+            prepareHelp();
+        }
+
+        /**
+         * Print the help text
+         */
         public void print() {
-            System.out.println("Print called");
+            System.out.println(helpMessage);
+        }
+
+        /**
+         * Prepare the help text string
+         */
+        private void prepareHelp() {
+            String firstLine = "Usage: " + appName + " ";
+            String description = "";
+            for (CmdObject obj: options.getOptions()) {
+                String curr = "";
+                if (!obj.isOptional()) {
+                    firstLine += "-"+obj.getShortOptionName()+"|--"+obj.getLongOptionName() + " ";
+                    curr += "\t-"+obj.getShortOptionName() + "|--"+obj.getLongOptionName() + " ";
+                    if (obj.isArg()) {
+                        firstLine += "<" + ((Arg) obj).getArgName() + "> ";
+                        curr += "<" + ((Arg) obj).getArgName() + ">";
+                    }
+                } else {
+                    firstLine += "[-" + obj.getShortOptionName()+"|--"+obj.getLongOptionName() + "] ";
+                    curr += "\t-"+obj.getShortOptionName() + "|--"+obj.getLongOptionName();
+                }
+                description += padRight(curr, 30) + obj.getDescription() + "\n";
+
+            }
+            String curr = "\t-h|--help ";
+            description += padRight(curr, 30) + "Print this message";
+            helpMessage += firstLine + "[-h|--help]" +  "\n";
+            helpMessage += description + "\n";
+
+        }
+
+
+        // Utilities
+        private String padRight(String s, int n) {
+            return String.format("%-" + n + "s", s);
+        }
+
+        private String padLeft(String s, int n) {
+            return String.format("%" + n + "s", s);
         }
 
     }
+
+    /**
+     * @param aliasName alias name for options
+     * @return args contain the alias option
+     */
+    public boolean has(@NonNull String aliasName) {
+        CmdObject foundObj = findFromCmdObjectsWithAlias(aliasName);
+        if (foundObj == null)
+            return false;
+
+        boolean found = false;
+        for (String item: args) {
+            if (item.contains("--") && item.substring(2).equals(foundObj.getLongOptionName()))
+                found = true;
+            else if (item.contains("-") && item.substring(1).equals(foundObj.getShortOptionName()))
+                found = true;
+        }
+        return found;
+    }
+
+    /**
+     * Get the value for {@link Arg}s
+     * @param alias alias name for the arg
+     * @return the value of the arg
+     */
+    public String get(@NonNull String alias) {
+        CmdObject foundObj = findFromCmdObjectsWithAlias(alias);
+        if (foundObj == null)
+            return null;
+        if (!foundObj.isArg())
+            throw new IllegalArgumentException("The alias for the option is a Flag. Flag's cannot have values.");
+
+        String val = null;
+
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].contains("--") && args[i].substring(2).equals(foundObj.getLongOptionName()))
+                val = args[i+1];
+            else if (args[i].contains("-") && args[i].substring(1).equals(foundObj.getShortOptionName()))
+                val = args[i+1];
+        }
+        return val;
+    }
+
+
+    private CmdObject findFromCmdObjectsWithAlias(String alias) {
+        CmdObject foundObj = null;
+        for (CmdObject obj: options.getOptions())
+            if (obj.getAlias().equals(alias))
+                foundObj = obj;
+        return foundObj;
+    }
+
+
 }
