@@ -13,11 +13,21 @@ public class Flag implements CmdObject {
     private String description;
     /** Whther it is required or optional */
     private boolean optional;
+    /** give an alias */
+    private String alias;
 
     static class Builder implements  CmdObject.Builder, Optional, Required {
 
         Flag f = new Flag();
 
+
+        /**
+         * Set long option name
+         * @param optionName long option name, queried with "--". For example,
+         *                   if longName is config, then you can access the long option with
+         *                   --config
+         * @return this
+         */
         @Override
         public Builder longOptionName(String optionName) {
             if (optionName == null || optionName.equals(""))
@@ -26,6 +36,13 @@ public class Flag implements CmdObject {
             return this;
         }
 
+        /**
+         * Set short option name
+         * @param shortOptionName short option name, queried with "-". For example,
+         *                        if shortName is c, then you can access the short option with
+         *                        -c
+         * @return this
+         */
         @Override
         public Builder shortOptionName(String shortOptionName) {
             if (shortOptionName == null || shortOptionName.equals(""))
@@ -34,20 +51,48 @@ public class Flag implements CmdObject {
             return this;
         }
 
+        /**
+         * Set description
+         * @param description description for the argument. Will be visible in help text
+         * @return this
+         */
         @Override
         public Builder description(String description) {
             if (description == null || description.equals(""))
                 throw new IllegalArgumentException("Description cannot be null or empty");
+            if (description.length() > 200)
+                throw new IllegalArgumentException("Description is too long. It cannot be longer than 200 characters");
             f.setDescription(description);
             return this;
         }
 
+        /**
+         * Set alias
+         * @param alias alias for the option
+         * @return this
+         */
+        @Override
+        public Flag.Builder alias(String alias) {
+            if (alias == null || alias.equals(""))
+                throw new IllegalArgumentException("Alias cannot be null or empty");
+            f.setAlias(alias);
+            return this;
+        }
+
+        /**
+         * Set the flag as optional
+         * @return this
+         */
         @Override
         public Builder optional() {
             f.setOptional(true);
             return this;
         }
 
+        /**
+         * Set the flag as required. This will enforce the client to have the option.
+         * @return this
+         */
         @Override
         public Builder required() {
             f.setOptional(false);
@@ -95,6 +140,8 @@ public class Flag implements CmdObject {
         this.optional = optional;
     }
 
+    private void setAlias(String alias) {this.alias = alias;}
+
     public String getLongOptionName() {
         return longOptionName;
     }
@@ -110,4 +157,9 @@ public class Flag implements CmdObject {
     public boolean isOptional() {
         return optional;
     }
+
+    public boolean isArg() {return false;}
+
+    public String getAlias() {return alias;}
+
 }
