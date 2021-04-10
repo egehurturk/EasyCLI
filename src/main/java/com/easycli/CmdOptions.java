@@ -18,6 +18,10 @@ public class CmdOptions {
         options = new ArrayList<CmdObject>();
     }
 
+    /**
+     * Variadic argument constructor
+     * @param varargs varargs
+     */
     public CmdOptions(CmdObject... varargs) {
         options = new ArrayList<CmdObject>();
 
@@ -32,9 +36,9 @@ public class CmdOptions {
      */
     public CmdOptions add(CmdObject obj) {
 
-
         for (CmdObject clio: options) {
-            if (clio.getShortOptionName().equals(obj.getShortOptionName()) || clio.getLongOptionName().equals(obj.getLongOptionName())) {
+            if (clio.getShortOptionName().equals(obj.getShortOptionName()) || clio.getLongOptionName().equals(obj.getLongOptionName())
+            || clio.getAlias().equals(obj.getAlias())) {
                 throw new IllegalArgumentException("The object " + obj + " is already present.");
             }
         }
@@ -83,6 +87,12 @@ public class CmdOptions {
         return false;
     }
 
+    /**
+     * Check if this class contains the given option
+     * @param longName long name
+     * @param shortName short name
+     * @return true/false
+     */
     public boolean hasOption(String longName, String shortName) {
         for (CmdObject obj: options)
             if (obj.getLongOptionName().equals(longName) && obj.getShortOptionName().equals(shortName))
@@ -90,5 +100,16 @@ public class CmdOptions {
         return false;
     }
 
+    /**
+     * Check if this class contains the given option
+     * @param alias alias name
+     * @return true/false
+     */
+    public boolean hasOption(String alias) {
+        for (CmdObject obj: options)
+            if (obj.getAlias().equals(alias))
+                return true;
+        return false;
+    }
 
 }
