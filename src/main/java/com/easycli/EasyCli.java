@@ -156,10 +156,19 @@ public class EasyCli {
         String val = null;
 
         for (int i = 0; i < args.length; i++) {
-            if (args[i].contains("--") && args[i].substring(2).equals(foundObj.getLongOptionName()))
-                val = args[i+1];
+            if (args[i].contains("--") && args[i].substring(2).equals(foundObj.getLongOptionName()))  {
+                try {
+                    val = args[i+1];
+                } catch (ArrayIndexOutOfBoundsException err) {
+                    val = null;
+                }
+            }
             else if (args[i].contains("-") && args[i].substring(1).equals(foundObj.getShortOptionName()))
-                val = args[i+1];
+                try {
+                    val = args[i+1];
+                } catch (ArrayIndexOutOfBoundsException err) {
+                    val = null;
+                }
         }
         return val;
     }
@@ -175,3 +184,5 @@ public class EasyCli {
 
 
 }
+
+// TODO: if <arg_name> is long, then format is wrong
