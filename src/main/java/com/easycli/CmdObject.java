@@ -1,7 +1,7 @@
 package com.easycli;
 
 /** An interface to group command line arguments */
-interface CmdObject {
+public interface CmdObject {
 
     /** Interface for Builder Pattern */
     interface Builder {
