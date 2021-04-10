@@ -57,7 +57,7 @@ public class EasyCli {
     /**
      * Synopsis class for printing help message
      */
-    class Synopsis {
+    public class Synopsis {
         // ./banzai -c|--config file_path [-v|--version] [-o|--verbose]
 
         @Getter private String helpMessage = "";
