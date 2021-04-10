@@ -8,6 +8,7 @@ on:
       - 'docs/**'
       - 'external/**'
       - '**.md'
+      - '**.sh'
     branches: [ main ]
   pull_request:
     paths-ignore:

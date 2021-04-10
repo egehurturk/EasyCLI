@@ -11,6 +11,23 @@ import org.junit.jupiter.api.Test;
 @DisplayName("Easy CLI tests")
 public class EasyCliTest {
 
+    @Test
+    @DisplayName("EasyCli tests")
+    void commandLineValueShouldBeAccessedTwo() {
+        // ./banzai -c|--config file_path [-v|--version] [-o|--verbose]
+        String[] args = {"./banzai", "-c", "/dev/null", "-v", "-o"};
+        EasyCli cli = new EasyCli(args, getOptions());
+        if (!cli.matchAllArgs()) {
+            EasyCli.Synopsis synopsis = new EasyCli.Synopsis();
+            synopsis.print();
+            System.exit(cli.getStatus());
+        }
+        System.out.println(cli.has("foo")); // false
+        String val = cli.get("file_path"); // should give the value of file_path
+        Assertions.assertEquals("/dev/null", val);
+
+    }
+
 
     @Test
     @DisplayName("Test CmdOptions class")
