@@ -87,6 +87,7 @@ $ git clone https://github.com/egehurturk/EasyCLI.git
 
 ```bash
 $ cd EasyCLI
+$ ./mvnw package
 $ mvn install
 ```
 
