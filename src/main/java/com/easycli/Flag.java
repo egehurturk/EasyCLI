@@ -16,7 +16,7 @@ public class Flag implements CmdObject {
     /** give an alias */
     private String alias;
 
-    static class Builder implements  CmdObject.Builder, Optional, Required {
+    public static class Builder implements  CmdObject.Builder, Optional, Required {
 
         Flag f = new Flag();
 

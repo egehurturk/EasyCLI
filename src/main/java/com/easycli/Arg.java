@@ -25,7 +25,7 @@ public class Arg implements CmdObject {
     /**
      * Inner class Builder that builds an Arg object
      */
-    static class Builder implements  CmdObject.Builder, Optional, Required {
+    public static class Builder implements  CmdObject.Builder, Optional, Required {
 
         // New arg for builder pattern
         Arg arg = new Arg();
