@@ -11,6 +11,19 @@ import org.junit.jupiter.api.Test;
 public class EasyCliTest {
 
     @Test
+    @DisplayName("Test long arg name")
+    void longArgNameError() {
+        Assertions.assertThrows(IllegalArgumentException.class, () ->  Arg.with()
+            .longOptionName("file")
+            .shortOptionName("f")
+            .argName("file_path_loalsdksldkaslkdlaskdsaldkasldkalsdk")
+            .description("Filepath")
+            .required()
+            .alias("config")
+            .build());
+    }
+
+    @Test
     @DisplayName("Description longer than 200 should give error")
     void testDescriptionLong() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> Arg.with()
@@ -110,10 +123,10 @@ public class EasyCliTest {
             EasyCli.Synopsis helper = cli.new Synopsis("euroleague");
             String helpMessage = helper.getHelpMessage();
             String j = "Usage: euroleague -c|--config <file path> [-v|--version] [-o|--verbose] [-h|--help]\n" +
-                    "\t-c|--config <file path>      Configuration file path\n" +
-                    "\t-v|--version                 Get version\n" +
-                    "\t-o|--verbose                 Get version\n" +
-                    "\t-h|--help                    Print this message\n";
+                "\t-c|--config <file path>                   Configuration file path\n" +
+                "\t-v|--version                              Get version\n" +
+                "\t-o|--verbose                              Get version\n" +
+                "\t-h|--help                                 Print this message\n";
             Assertions.assertEquals(helpMessage, j);
         }
     }

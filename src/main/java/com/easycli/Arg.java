@@ -83,6 +83,8 @@ public class Arg implements CmdObject {
         public Builder argName(String argName) {
             if (argName == null || argName.equals(""))
                 throw new IllegalArgumentException("Argument name cannot be null or empty");
+            if (argName.length() > 30)
+                throw new IllegalArgumentException("Argument name is too long. It cannot be longer than 30 characters");
             arg.setArgName(argName);
             return this;
         }

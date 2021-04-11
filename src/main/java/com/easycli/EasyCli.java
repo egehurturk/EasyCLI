@@ -100,11 +100,11 @@ public class EasyCli {
                     firstLine += "[-" + obj.getShortOptionName()+"|--"+obj.getLongOptionName() + "] ";
                     curr += "\t-"+obj.getShortOptionName() + "|--"+obj.getLongOptionName();
                 }
-                description += padRight(curr, 30) + obj.getDescription() + "\n";
+                description += padRight(curr, 43) + obj.getDescription() + "\n";
 
             }
             String curr = "\t-h|--help ";
-            description += padRight(curr, 30) + "Print this message";
+            description += padRight(curr, 43) + "Print this message";
             helpMessage += firstLine + "[-h|--help]" +  "\n";
             helpMessage += description + "\n";
 

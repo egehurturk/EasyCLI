@@ -110,7 +110,11 @@ $ mvn install
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-`add usage here`
+You can create command line arguments and flags with EasyCli API:
+
+```java
+
+```
 
 
 
