@@ -112,10 +112,143 @@ $ mvn install
 
 You can create command line arguments and flags with EasyCli API:
 
+### `Arg`
 ```java
+Arg directory = Arg.with()
+          .longOptionName("directory")
+          .shortOptionName("d")
+          .argName("project_dir")
+          .description("Maven generated project path")
+          .required()
+          .alias("dir")
+          .build();
+```
+* **`longOptionName(String)`**: sets the long name, i.e., the name that will be visible with `--` prefix. For instance, if you set it as `directory`, then it will be accessed with `--directory`.
+* **`shortOptionName(String)`**: sets the short name, i.e., the name that will be visible with `-` prefix. For instance, if you set is as `d`, then it will be accessed with `-d`.
+* **`argName(String)`**: sets the argument name that will be displayed in the help message. 
+* **`description(String)`**: sets the description for the argument and will be displayed in the help message.
+* **`required()`:** marks the `Arg` as required. The opposite method is **`optional()`**, which marks the `Arg` as optional.
+* **`alias(String)`**: gives an alias value for the argument. This value is used to retrieve the value of an `Arg`.
+* **`build()`**: builds the `Arg`
+  
+The code above will create an `Arg`. An `Arg` in a command line is a special parameter that has a value. For instance:
+```bash
+$ ./executable --directory /dev/null
+```
+Here, the `--directory` is defined as an `Arg`, which has a value after the flag. 
 
+
+
+### `Flag`
+```java
+Flag version = Flag.with()
+          .longOptionName("version")
+          .shortOptionName("v")
+          .description("Get the latest version")
+          .optional()
+          .alias("version")
+          .build();
+```
+* **`longOptionName(String)`**: sets the long name, i.e., the name that will be visible with `--` prefix. For instance, if you set it as `version`, then it will be accessed with `--version`.
+* **`shortOptionName(String)`**: sets the short name, i.e., the name that will be visible with `-` prefix. For instance, if you set is as `v`, then it will be accessed with `-v`.
+* **`description(String)`**: sets the description for the argument and will be displayed in the help message.
+* **`optional()`:** marks the `Flag` as required. The opposite method is **`required()`**, which marks the `Flag` as optional.
+* **`alias(String)`**: gives an alias value for the argument. 
+* **`build()`**: builds the `Flag`
+
+
+The code above will create a `Flag`. A `Flag` is a command line parameter that does not have a value. For instance,
+```bash
+./executable --version
+```
+Here, the `--version` is defined as a `Flag`, which does not have a value and is an indicator.
+
+### `CmdOptions`
+`CmdOptions` is a class that stores `Arg`s and `Flag`s. You can create a new `CmdOptions` with either:
+```java
+CmdOptions options = new CmdOptions(arg1, flag1, /*...*/);
+```
+or
+```java
+CmdOptions options = new CmdOptions();
+options.add(arg1);
+options.add(flag1);
+//...
 ```
 
+### `EasyCli`
+This class is the main class that provides methods to check and retrieve command line arguments. You can create a new `EasyCli` with:
+```java
+ EasyCli cli = new EasyCli(args, options);
+```
+* `args` is the argument array. This must be the parameter of the main method: `public static void main(String[] args)`
+* `options` is the `CmdOptions` class that stores `Arg`s and `Flag`s
+
+`EasyCli` class provides a method to check if all required `Arg`s and `Flag`s exist in the `args` array. This method is `matchAllArgs` and returns a boolean:
+```java
+boolean success = cli.matchAllArgs();
+```
+* A typical usage of this method is to print the help message when required parameters do not exist in the array:
+  ```java
+   if (!cli.matchAllArgs()) {
+      EasyCli.Synopsis helper = cli.new Synopsis("<exec_name>");
+      helper.print();
+  }
+  ```
+
+You can check if a parameter (an `Arg` or a `Flag`) exists with the `has(String)` method. The method accepts the **alias** value set for the particular parameter:
+```java
+boolean versionExists = cli.has("version");
+```
+* Here, the `"version"` is the alias name
+
+You can get **`Arg`** values with the `get(String)` method. The method accepts the **alias** value set for an `Arg`:
+```java
+String dirValue = cli.get("dir");
+```
+* If a `Flag` alias is given, then the method throws `IllegalArgumentException`
+* If the `Arg` with the given alias is not found, the return value will be `null`.
+  * You can combine `has(String)` and `get(String)`:
+    ```java
+    if (cli.has("dir")) 
+        String dir = cli.get("dir");
+    ```
+    * This will prevent `dir` from being `null`.
+
+#### `EasyCli.Synopsis`
+This class provides a method to print the synopsis of the given `CmdOptions` object. You can instantiate this class with:
+```java
+EasyCli.Synopsis synopsis = cli.new Synopsis("<executable>");
+```
+* `"<executable>"` is the name of the executable you are running. 
+
+You can print the help message with the `print()` method:
+```java
+synopsis.print();
+```
+
+This will produce an output like:
+```
+Usage: <executable> -d|--dir <project_dir> [-v|--version] [-h|--help]
+	-d|--directory <project_dir>              Maven generated project
+	-v|--version                              Get the latest version
+	-h|--help                                 Print this message
+```
+* `[]` indicates that the value is optional. 
+* `|` is a separator for mutually exclusive items; choose one
+* `<>` is a placeholder for which you must supply a value
+
+The recommended way to use `EasyCli` is like this:
+```java
+EasyCli cli = new EasyCli(args, options /* CmdOptions object */);
+if (!cli.matchAllArgs()) {
+    EasyCli.Synopsis help = cli.new Synopsis("<exec_name>");
+    help.print();
+    System.exit(1);
+}
+String dirVal = cli.get("dir");
+//...
+```
 
 
 <!-- ROADMAP -->
