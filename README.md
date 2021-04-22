@@ -1,7 +1,7 @@
 [![GitHub contributors](https://img.shields.io/github/contributors/egehurturk/EasyCLI)](https://GitHub.com/egehurturk/EasyCLI/graphs/contributors/)&nbsp;&nbsp;&nbsp;
-[![Forks](https://img.shields.io/github/forks/egehurturk/EasyCLI?style=social&label=Fork&maxAge=2592000)](https://GitHub.com/egehurturk/EasyCLI/network/)
+[![Forks](https://img.shields.io/github/forks/egehurturk/EasyCLI?style=social&label=Fork&maxAge=2592000)](https://img.shields.io/github/forks/egehurturk/easycli?color=green)
 &nbsp;&nbsp;&nbsp;
-[![Stargazers](https://img.shields.io/github/stars/egehurturk/EasyCLI?style=social&label=Star&maxAge=2592000)](https://GitHub.com/egehurturk/EasyCLI/stargazers/)
+[![Stargazers](https://img.shields.io/github/stars/egehurturk/EasyCLI?style=social&label=Star&maxAge=2592000)](https://img.shields.io/github/stars/egehurturk/easycli?color=green&style=plastic)
 &nbsp;&nbsp;&nbsp;
 [![Issues](https://img.shields.io/github/issues/egehurturk/EasyCLI)](https://GitHub.com/egehurturk/EasyCLI/issues/)
 &nbsp;&nbsp;&nbsp;
